@@ -47,7 +47,10 @@ impl Dial {
                 spills += 1;
             }
             spills += (increased / size).abs();
-            self.pos = (size + increased) % size;
+            self.pos = increased % size;
+            while self.pos < 0 {
+                self.pos += size
+            }
         }
         // if the direction is right, add the distance to the position
         else {
@@ -167,6 +170,66 @@ mod tests {
     #[test]
     fn day01_part2_b() {
         let result = day01_part2("input/day01b.txt");
-        assert_eq!(result, 6914);
+        assert_eq!(result, 6860);
     }
+
+    #[test]
+    fn day01_left_no_spill() {
+        let mut dial = Dial::new(50, 99);
+        let operation = Operation {  direction: Direction::Left, distance: 30 };
+        let spills = dial.turn(&operation);
+        assert_eq!(dial.pos, 20);
+        assert_eq!(spills, 0);
+    }
+
+    #[test]
+    fn day01_left_one_spill_end_at_zero() {
+        let mut dial = Dial::new(50, 99);
+        let operation = Operation {  direction: Direction::Left, distance: 50 };
+        let spills = dial.turn(&operation);
+        assert_eq!(dial.pos, 0);
+        assert_eq!(spills, 1);
+    }
+
+    #[test]
+    fn day01_left_one_spill_end_below_zero() {
+        let mut dial = Dial::new(50, 99);
+        let operation = Operation {  direction: Direction::Left, distance: 60 };
+        let spills = dial.turn(&operation);
+        assert_eq!(dial.pos, 90);
+        assert_eq!(spills, 1);
+    }
+
+    #[test]
+    fn day01_left_two_spills_end_zero() {
+        let mut dial = Dial::new(50, 99);
+        let operation = Operation {  direction: Direction::Left, distance: 150 };
+        let spills = dial.turn(&operation);
+        assert_eq!(dial.pos, 0);
+        assert_eq!(spills, 2);
+    }
+
+    #[test]
+    fn day01_left_two_spills_end_below_zero() {
+        let mut dial = Dial::new(50, 99);
+        let operation = Operation {  direction: Direction::Left, distance: 160 };
+        let spills = dial.turn(&operation);
+        assert_eq!(dial.pos, 90);
+        assert_eq!(spills, 2);
+    }
+
+    #[test]
+    fn day01_right_no_spill() {}
+
+    #[test]
+    fn day01_right_one_spill_end_at_zero() {}
+
+    #[test]
+    fn day01_right_one_spill_end_after_zero() {}
+
+    #[test]
+    fn day01_right_two_spills_end_zero() {}
+
+    #[test]
+    fn day01_right_two_spills_end_above_zero() {}
 }

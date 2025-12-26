@@ -28,10 +28,10 @@ pub fn day02_part1(filename: &str) -> i64 {
 }
 
 
-fn compare_texts_in_array(texts: Vec<String>) -> bool {
+fn compare_texts_in_array(texts: &Vec<String>) -> bool {
     let to_compare = texts[0].clone();
     for text in texts {
-        if text != to_compare {
+        if *text != to_compare {
             return false;
         }
     }
@@ -47,22 +47,23 @@ pub fn day02_part2(filename: &str) -> i64 {
     // iterate all the pairs
     for pair in pairs {
         // iterate from the first number to the second number, by one
-        for num in pair[0]..=pair[1] {
-            let mut divisor = 2;
-            // maximum divisor is a square root of the number of digits, rounded down to the nearest integer
-            let max_divisor = (num.to_string().len() as f64).sqrt().floor() as usize;
+        'the_outer_loop: for num in pair[0]..=pair[1] {
+            let mut divisor = 1;
+            let num_stringized = num.to_string();
+            let num_len = num_stringized.len();
+            // maximum divisor is a half of the number of digits, rounded down to the nearest integer
+            let max_divisor = num_len / 2;
 
-            'the_outer_loop: while divisor <= max_divisor {
-                if num.to_string().len() % divisor != 0 {
-                    continue;
+            'the_inner_loop: while divisor <= max_divisor {
+                if num_len % divisor != 0 {
+                    divisor += 1;
+                    continue 'the_inner_loop;
                 }
 
-                // split the number into divisor parts
-                let size_of_piece = num.to_string().len() / divisor;
                 // create an array of the pieces
-                let pieces = num.to_string().chars().collect::<Vec<char>>().chunks(size_of_piece).map(|chunk| chunk.iter().collect::<String>()).collect::<Vec<String>>();
+                let pieces = num_stringized.chars().collect::<Vec<char>>().chunks(divisor).map(|chunk| chunk.iter().collect::<String>()).collect::<Vec<String>>().clone();
                 // check if the first half is equal to the second half
-                if compare_texts_in_array(pieces) {
+                if compare_texts_in_array(&pieces) {
                     result += num;
                     continue 'the_outer_loop;
                 }
@@ -99,6 +100,6 @@ mod tests {
     #[test]
     fn day02_part2_b() {
         let result = day02_part2("input/day02b.txt");
-        assert_eq!(result, 0);
+        assert_eq!(result, 28915664389);
     }
 }

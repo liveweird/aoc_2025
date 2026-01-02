@@ -78,7 +78,7 @@ impl Floor {
         }
     }
 
-    fn print(&self, size: u8) {
+    fn _print(&self, size: u8) {
         for y in 0..size {
             for x in 0..size {
                 let tile = self.floor_map.get(&Position::new(x, y)).unwrap();
@@ -92,7 +92,7 @@ impl Floor {
         }
     }
 
-    fn print_neighbors(&self, size: u8) {
+    fn _print_neighbors(&self, size: u8) {
         for y in 0..size {
             for x in 0..size {
                 let tile = self.floor_map.get(&Position::new(x, y)).unwrap();
